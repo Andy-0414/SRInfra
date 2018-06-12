@@ -6,8 +6,8 @@ const klunch = require('k-lunch'); // 급식
 const bodyParser = require('body-parser'); // POST
 var mysql = require('mysql');
 var con = mysql.createConnection({
-    host: 'http://58.145.101.15:3000:3306',
-    user: 'srinfra',
+    host: '58.145.101.15',
+    user: 'root',
     password: '1111',
     database: 'SRinfra'
 });
@@ -63,14 +63,14 @@ app.get('/distance', (req, res) => {
         // 최단거리 짜야함
     })
 })
-app.get('/test', (req, res) => {
-    var sql = "INSERT INTO login (id, password) VALUES('testId', 'testPassword')";
-    con.query(sql, (err, result, fields)=>{
+app.get('/user/login', (req, res) => {
+
+})
+app.post('/user/signin', (req, res) => {
+    var sql = "INSERT INTO login (id, password, name) VALUES(?,?,?)";
+    con.query(sql,[], (err, result, fields) => {
         console.log('good');
     })
-})
-app.post('/login', (req, res) => {
-
 })
 app.listen(3030, () => {
     console.log('Server Open');

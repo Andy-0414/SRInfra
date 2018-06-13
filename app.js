@@ -60,62 +60,60 @@ app.get('/time/:grade/:class', (req, res) => { // 시간표 가져오기
 app.get('/distance', (req, res) => {
     fs.readFile('data/mapData.json', (err, data) => { // data/ 에있는 mapData.json파일을 불러옴
         const route = new Graph(JSON.parse(data));
-        // 최단거리 짜야함
+        // 최단거리 데이터 필요
     })
 })
-app.get('/user/signin', (req, res) => {
-    var id = req.body.id;
-    var pw = req.body.pw;
-    var id = "test";
-    var pw = "1111";
+app.post('/user/signin', (req, res) => { // 로그인
+    var id = req.body.id; // 유저 아이디
+    var pw = req.body.pw; // 유저 패스워드
     var sql = "SELECT id,password FROM login WHERE id=?"
     con.query(sql, [id], (err, result, fields) => {
-        if (!fields || err) {
-            res.status(505).end();
+        if (err) {
+            res.status(505).end(); // 에러 시 505
         }
         if(!result[0]){
             console.log("login id x");
-            res.status(405).end();
+            res.status(405).end(); // 아이디가 없을 시 405
         }
         else {
             if (result[0].password == pw) {
                 console.log(`[LOGIN USER]\nID : ${id}`);
-                res.status(200).end();
+                res.status(200).end(); // 성공 시 200
             }
             else
             {
                 console.log("login pw x");
-                res.status(405).end();
+                res.status(405).end(); // 비밀번호 불일치 시 405
             }
         }
 
     })
 })
-app.get('/user/signup', (req, res) => {
-    var name = req.body.name;
-    var id = req.body.id;
-    var pw = req.body.pw;
+app.post('/user/signup', (req, res) => {
+    var name = req.body.name; // 유저 이름
+    var id = req.body.id; // 유저 아이디
+    var pw = req.body.pw; // 유저 패스워드
     var sql = "SELECT id FROM login WHERE id=?";
     con.query(sql, [id], (err, result, fields) => {
         if (err) {
-            res.status(505).end();
+            res.status(505).end(); // 에러 시 505
         }
         if (!result[0]) {
             var sql = "INSERT INTO login (id, password, name) VALUES(?,?,?)";
             con.query(sql, [id, pw, name], (err, result, fields) => {
                 if (err) {
-                    res.status(505).end();
+                    res.status(505).end(); // 에러 시 505
                 }
                 else {
                     var date = new Date();
                     console.log(`[Create User]\nID : ${id}\nNAME : ${name}`);
-                    res.status(200).end()
+                    res.status(200).end() // 제대로 생성됬을 시 200
                 }
             })
         }
         else {
             console.log("[SAME USER]")
-            res.status(405).end();
+            res.status(405).end(); // 이미 있는 사용자일시 405
         }
     });
 

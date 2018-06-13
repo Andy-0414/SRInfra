@@ -63,14 +63,62 @@ app.get('/distance', (req, res) => {
         // 최단거리 짜야함
     })
 })
-app.get('/user/login', (req, res) => {
+app.get('/user/signin', (req, res) => {
+    var id = req.body.id;
+    var pw = req.body.pw;
+    var id = "test";
+    var pw = "1111";
+    var sql = "SELECT id,password FROM login WHERE id=?"
+    con.query(sql, [id], (err, result, fields) => {
+        if (!fields || err) {
+            res.status(505).end();
+        }
+        if(!result[0]){
+            console.log("login id x");
+            res.status(405).end();
+        }
+        else {
+            if (result[0].password == pw) {
+                console.log(`[LOGIN USER]\nID : ${id}`);
+                res.status(200).end();
+            }
+            else
+            {
+                console.log("login pw x");
+                res.status(405).end();
+            }
+        }
 
-})
-app.post('/user/signin', (req, res) => {
-    var sql = "INSERT INTO login (id, password, name) VALUES(?,?,?)";
-    con.query(sql,[], (err, result, fields) => {
-        console.log('good');
     })
+})
+app.get('/user/signup', (req, res) => {
+    var name = req.body.name;
+    var id = req.body.id;
+    var pw = req.body.pw;
+    var sql = "SELECT id FROM login WHERE id=?";
+    con.query(sql, [id], (err, result, fields) => {
+        if (err) {
+            res.status(505).end();
+        }
+        if (!result[0]) {
+            var sql = "INSERT INTO login (id, password, name) VALUES(?,?,?)";
+            con.query(sql, [id, pw, name], (err, result, fields) => {
+                if (err) {
+                    res.status(505).end();
+                }
+                else {
+                    var date = new Date();
+                    console.log(`[Create User]\nID : ${id}\nNAME : ${name}`);
+                    res.status(200).end()
+                }
+            })
+        }
+        else {
+            console.log("[SAME USER]")
+            res.status(405).end();
+        }
+    });
+
 })
 app.listen(3030, () => {
     console.log('Server Open');

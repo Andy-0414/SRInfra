@@ -71,7 +71,7 @@ app.post('/user/signin', (req, res) => { // 로그인
         if (err) {
             res.status(505).end(); // 에러 시 505
         }
-        if(!result[0]){
+        if (!result[0]) {
             console.log("login id x");
             res.status(405).end(); // 아이디가 없을 시 405
         }
@@ -80,8 +80,7 @@ app.post('/user/signin', (req, res) => { // 로그인
                 console.log(`[LOGIN USER]\nID : ${id}`);
                 res.status(200).end(); // 성공 시 200
             }
-            else
-            {
+            else {
                 console.log("login pw x");
                 res.status(405).end(); // 비밀번호 불일치 시 405
             }
@@ -93,29 +92,35 @@ app.post('/user/signup', (req, res) => {
     var name = req.body.name; // 유저 이름
     var id = req.body.id; // 유저 아이디
     var pw = req.body.pw; // 유저 패스워드
-    var sql = "SELECT id FROM login WHERE id=?";
-    con.query(sql, [id], (err, result, fields) => {
-        if (err) {
-            res.status(505).end(); // 에러 시 505
-        }
-        if (!result[0]) {
-            var sql = "INSERT INTO login (id, password, name) VALUES(?,?,?)";
-            con.query(sql, [id, pw, name], (err, result, fields) => {
-                if (err) {
-                    res.status(505).end(); // 에러 시 505
-                }
-                else {
-                    var date = new Date();
-                    console.log(`[Create User]\nID : ${id}\nNAME : ${name}`);
-                    res.status(200).end() // 제대로 생성됬을 시 200
-                }
-            })
-        }
-        else {
-            console.log("[SAME USER]")
-            res.status(405).end(); // 이미 있는 사용자일시 405
-        }
-    });
+    if (!name || !id || !pw) {
+        console.log("[NOT DATA]")
+        res.status(405).end()
+    }
+    else {
+        var sql = "SELECT id FROM login WHERE id=?";
+        con.query(sql, [id], (err, result, fields) => {
+            if (err) {
+                res.status(505).end(); // 에러 시 505
+            }
+            if (!result[0]) {
+                var sql = "INSERT INTO login (id, password, name) VALUES(?,?,?)";
+                con.query(sql, [id, pw, name], (err, result, fields) => {
+                    if (err) {
+                        res.status(505).end(); // 에러 시 505
+                    }
+                    else {
+                        var date = new Date();
+                        console.log(`[Create User]\nID : ${id}\nNAME : ${name}`);
+                        res.status(200).end() // 제대로 생성됬을 시 200
+                    }
+                })
+            }
+            else {
+                console.log("[SAME USER]")
+                res.status(405).end(); // 이미 있는 사용자일시 405
+            }
+        });
+    }
 
 })
 app.listen(3030, () => {

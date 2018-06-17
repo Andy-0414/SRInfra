@@ -88,13 +88,13 @@ app.post('/user/signin', (req, res) => { // 로그인
 
     })
 })
-app.post('/user/signup', (req, res) => {
+app.post('/user/signup', (req, res) => { // 회원가입
     var name = req.body.name; // 유저 이름
     var id = req.body.id; // 유저 아이디
     var pw = req.body.pw; // 유저 패스워드
     if (!name || !id || !pw) {
         console.log("[NOT DATA]")
-        res.status(405).end()
+        res.status(405).end() // 데이터가 없을 시 405
     }
     else {
         var sql = "SELECT id FROM login WHERE id=?";
@@ -121,7 +121,49 @@ app.post('/user/signup', (req, res) => {
             }
         });
     }
+})
 
+app.post('/find', (req, res) => {
+    var id = req.body.id;
+    var name = req.body.name;
+    if (!name || !id) {
+        console.log("[NOT DATA]")
+        res.status(405).end() // 데이터가 없을 시 405
+    }
+    else {
+        var sql = "SELECT id,name FROM login WHERE id=?";
+        con.query(sql, [id], (err, result, fields) => {
+            if (err) {
+                res.status(505).end(); // 에러 시 505
+            }
+            if (!result[0]) {
+                console.log("[NOT DATA]")
+                res.status(405).end() // 데이터가 없을 시 405
+            }
+            else {
+                if (result[0].name == name) {
+                    console.log("[FIND DATA]")
+                    res.status(200).end() // 찾았을 시 200
+                }
+            }
+        });
+    }
+
+})
+app.post('/change', (req, res) => {
+    var id = req.body.id;
+    var pw = req.body.password;
+
+    var sql = "UPDATE login SET password=? WHERE id=?"
+    con.query(sql, [pw, id], (err, result, fields) => {
+        if (err) {
+            res.status(505).end(); // 에러 시 505
+        }
+        else{
+            console.log("[CHANGE DATA]")
+            res.status(200).end();
+        }
+    })
 })
 app.listen(3030, () => {
     console.log('Server Open');

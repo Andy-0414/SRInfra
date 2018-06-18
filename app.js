@@ -123,9 +123,9 @@ app.post('/user/signup', (req, res) => { // 회원가입
     }
 })
 
-app.post('/find', (req, res) => {
-    var id = req.body.id;
-    var name = req.body.name;
+app.post('/find', (req, res) => { // 비밀번호 변경을 위한 유저 찾기
+    var id = req.body.id; // 유저 아이디
+    var name = req.body.name; // 유저 이름
     if (!name || !id) {
         console.log("[NOT DATA]")
         res.status(405).end() // 데이터가 없을 시 405
@@ -150,21 +150,55 @@ app.post('/find', (req, res) => {
     }
 
 })
-app.post('/change', (req, res) => {
-    var id = req.body.id;
-    var pw = req.body.password;
+app.post('/change', (req, res) => { // 유저찾기에 성공시 비밀번호 변경
+    var id = req.body.id; // 유저 아이디
+    var pw = req.body.password; // 유저 패스워드
 
     var sql = "UPDATE login SET password=? WHERE id=?"
     con.query(sql, [pw, id], (err, result, fields) => {
         if (err) {
             res.status(505).end(); // 에러 시 505
         }
-        else{
+        else {
             console.log("[CHANGE DATA]")
-            res.status(200).end();
+            res.status(200).end(); // 성공 시 200
         }
     })
 })
+
+app.post('/post', (req, res) => {
+    // INSERT INTO QnA (writerId,date,content) VALUES (4,now(),"Hello World!");
+})
+app.get('/qna', (req, res) => {
+    var sql = "SELECT * FROM QnA"
+    con.query(sql, (err, result, fields) => {
+        if (err) {
+            res.status(505).end(); // 에러 시 505
+        }
+        else {
+            var data = [];
+            var idx = "";
+            for (i in result) {
+                idx += result[i].writerId
+                if (i < result.length - 1) {
+                    idx += ",";
+                }
+            }
+            var sql = "SELECT pCode,name FROM login WHERE pCode in (" + idx + ")";
+            con.query(sql, (err, user, fields) => {
+                for (i in result) {
+                    data.push({
+                        writer: user[user.findIndex(x => x.pCode == result[i].writerId)].name,
+                        date: result[i].date,
+                        content: result[i].content
+                    })
+                }
+                res.send({ result: data })
+            })
+        }
+    })
+})
+
 app.listen(3030, () => {
     console.log('Server Open');
 })

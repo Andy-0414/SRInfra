@@ -1,0 +1,21 @@
+Server Open
+[FIND DATA]
+[FIND DATA]
+[CHANGE DATA]
+[FIND DATA]
+[CHANGE DATA]
+[LOGIN USER]
+ID : 1
+login id x
+events.js:183
+      throw er; // Unhandled 'error' event
+      ^
+
+Error: Connection lost: The server closed the connection.
+    at Protocol.end (/home/andy0414/server/Andy0414/SRInfra/node_modules/mysql/lib/protocol/Protocol.js:113:13)
+    at Socket.<anonymous> (/home/andy0414/server/Andy0414/SRInfra/node_modules/mysql/lib/Connection.js:109:28)
+    at emitNone (events.js:111:20)
+    at Socket.emit (events.js:208:7)
+    at endReadableNT (_stream_readable.js:1064:12)
+    at _combinedTickCallback (internal/process/next_tick.js:138:11)
+    at process._tickCallback (internal/process/next_tick.js:180:9)

@@ -227,6 +227,7 @@ app.get('/qna', (req, res) => {
 app.get('/tip/:name', (req, res) => {
     var filename = req.params.name;
     fs.readFile('data/tipContent.json', (err, data) => { // data/ 에있는 tipContent.json파일을 불러옴
+        if (err) { res.status(505).end(); }
         var tipList = JSON.parse(data);
         res.send({
             result: tipList[filename]

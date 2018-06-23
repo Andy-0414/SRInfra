@@ -6,11 +6,35 @@ const klunch = require('k-lunch'); // 급식
 const bodyParser = require('body-parser'); // POST
 var mysql = require('mysql');
 var con = mysql.createConnection({
-    host: '58.145.101.15',
+    host: 'localhost',
     user: 'root',
     password: '1111',
     database: 'SRinfra'
 });
+/*
+    ==DB DATA==
+
+CREATE DATABASE SRinfra CHARACTER SET utf8 COLLATE utf8_general_ci;
+
+CREATE TABLE login
+(
+    `pCode`     INT            NOT NULL    AUTO_INCREMENT,
+    `id`        VARCHAR(24)    NOT NULL,
+    `password`  VARCHAR(24)    NOT NULL,
+    `name`      VARCHAR(24)    NULL,
+    PRIMARY KEY (pCode)
+);
+
+CREATE TABLE QnA
+(
+    `id`        INT             NOT NULL    AUTO_INCREMENT,
+    `writerId`  INT             NOT NULL,
+    `date`      DATETIME        NOT NULL,
+    `content`   VARCHAR(500)    NOT NULL,
+    `pass`      BOOL            NULL,
+    PRIMARY KEY (id)
+);
+*/
 
 con.connect();
 const options = {
@@ -21,6 +45,7 @@ const options = {
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static("data"));
+app.use(express.static("file"));
 
 app.get('/meal/:year/:m/:day/:lunch', (req, res) => { // 급식 가져오기 /meal/년도/월/일/중식or석식
     const form = {
@@ -196,6 +221,16 @@ app.get('/qna', (req, res) => {
                 res.send({ result: data })
             })
         }
+    })
+})
+
+app.get('/tip/:name', (req, res) => {
+    var filename = req.params.name;
+    fs.readFile('data/tipContent.json', (err, data) => { // data/ 에있는 tipContent.json파일을 불러옴
+        var tipList = JSON.parse(data);
+        res.send({
+            result: tipList[filename]
+        })
     })
 })
 

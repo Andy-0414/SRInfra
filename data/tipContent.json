@@ -1,0 +1,10 @@
+{
+    "top": {
+        "content": "Hello Top",
+        "imageAddress": "http://58.145.101.15:3030/top.jpg"
+    },
+    "bottom":{
+        "content": "Hello Bottom",
+        "imageAddress": "http://58.145.101.15:3030/sunrin.png"
+    }
+}
